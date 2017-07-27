@@ -4,12 +4,13 @@ const testAuth = (z /*, bundle*/) => {
   // In this example, we'll hit httpbin, which validates the Authorization Header against the arguments passed in the URL path
   const promise = z.request({
     url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/layout/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+    method: 'GET'
   });
 
   // This method can return any truthy value to indicate the credentials are valid.
   // Raise an error to show
   return promise.then((response) => {
-  
+
     if (response.status === 401) {
       throw new Error('The Session Key you supplied is invalid');
     }

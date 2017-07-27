@@ -55,32 +55,32 @@ const createField = function createFieldFunction (z, bundle){
     //     });
     // });
 
-    const promise = z.request({
-      url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/auth/{{bundle.authData.solution}}',
+    const createFieldPromise = z.request({
+      url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+      method: 'GET',
     });
 
-    return promise.then(response) => {
+    return createFieldPromise.then(response) => {
       if (response.statusCode < 200 || response.statusCode > 299){
             console.log('error', err)
-            throw new Error('the field retrieval is hitting the wall')
-            }
-            const errorCode = response.statusCode
-            const records = response.body["data"]
-            keys = Object.keys(records[0]['fieldData'])
-            const fieldFormat = []
-            keys.forEach(function(element){
-                var fieldItem = {}
-                fieldItem['key'] = `${element}`
-                fieldItem['label'] = `${element}`
-                fieldItem['type'] = 'string'
-                fieldFormat.push(fieldItem)
-            });
-            console.log(fieldFormat)
-            return fieldFormat;
+            throw new Error('createFieldPromise is hitting the wall');
+          }
+      const errorCode = response.statusCode
+      const records = response.body["data"]
+      keys = Object.keys(records[0]['fieldData'])
+      const fieldFormat = []
+      keys.forEach(function(element){
+          var fieldItem = {}
+          fieldItem['key'] = `${element}`
+          fieldItem['label'] = `${element}`
+          fieldItem['type'] = 'string'
+          fieldFormat.push(fieldItem)
+      });
+      console.log(fieldFormat)
+      return fieldFormat;
     };
-}
+};
 
-();
 
 const getRecipe = (z, bundle) => {
   return z.request({
@@ -102,19 +102,40 @@ const listRecipes = (z, bundle) => {
 };
 
 const createRecipe = (z, bundle) => {
-  const requestOptions = {
-    url: url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
-    method: 'POST',
-    body: JSON.stringify({
-      'data' : bundle.inputData.data,
-    }),
-    headers: {
-      'content-type': 'application/json'
+
+  const payload = {}
+  
+  const createRecipeFieldPromise = z.request({
+      url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+      method: 'GET'
+    });
+
+  createRecipeFieldPromise.then(response) => {
+    
+    if (response.statusCode < 200 || response.statusCode > 299){
+          console.log('error', err)
+          throw new Error('createRecipePromise is hitting the wall');
     }
+  
+    const records = response.body["data"]
+    keys = Object.keys(records[0]['fieldData'])
+    
+    keys.forEach(function(element){
+       payload[element] = bundle.inputData.element
+    });
+    
+    console.log(payload)
+    
+    const requestOptions = {
+    url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+    method: 'POST',
+    body: JSON.stringify({data: payload}),
+    headers: {'Content-Type': 'application/json'}
   };
 
   return z.request(requestOptions)
     .then((response) => JSON.parse(response.content));
+  };
 };
 
 const searchRecipe = (z, bundle) => {
@@ -161,18 +182,20 @@ module.exports = {
     },
   },
   // The list method on this resource becomes a Trigger on the app. Zapier will use polling to watch for new records
-  list: {
-    display: {
-      label: 'New Recipe',
-      description: 'Trigger when a new recipe is added.',
-    },
-    operation: {
-      inputFields: [
-        {key: 'style', type: 'string', helpText: 'Explain what style of cuisine this is.'},
-      ],
-      perform: listRecipes,
-    },
-  },
+  
+  // list: {
+  //   display: {
+  //     label: 'New Recipe',
+  //     description: 'Trigger when a new recipe is added.',
+  //   },
+  //   operation: {
+  //     inputFields: [
+  //       {key: 'style', type: 'string', helpText: 'Explain what style of cuisine this is.'},
+  //     ],
+  //     perform: listRecipes,
+  //   },
+  // },
+  
   // If your app supports webhooks, you can define a hook method instead of a list method.
   // Zapier will turn this into a webhook Trigger on the app.
   // hook: {
@@ -180,6 +203,7 @@ module.exports = {
   // },
 
   // The create method on this resource becomes a Write on this app
+  
   create: {
     display: {
       label: 'Create Recipe',
@@ -194,6 +218,7 @@ module.exports = {
       perform: createRecipe,
     },
   },
+
   // The search method on this resource becomes a Search on this app
   search: {
     display: {
