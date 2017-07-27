@@ -1,3 +1,5 @@
+//testing script for FileMaker DATA API call observations
+//Run it with NODE_DEBUG=request node test.js
 const request = require('request')
 const fs = require('fs');
 const authData = {
