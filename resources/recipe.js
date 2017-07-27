@@ -1,4 +1,86 @@
-const _sharedBaseUrl = 'http://57b20fb546b57d1100a3c405.mockapi.io/api';
+const request = require('request')
+const fs = require('fs');
+const authData = {
+        'user': 'admin',
+        'password': '123',
+        'layout': 'stock'
+    }
+
+const createField = function createFieldFunction (z, bundle){
+
+    // const authData = {
+    //     'user': bundle.authData.user,
+    //     'password': bundle.authData.password,
+    //     'layout': bundle.authData.layout
+    // }
+
+    // const authenticateOption = {
+    //   method: 'post',
+    //   url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/auth/{{bundle.authData.solution}}',
+    //   headers: {
+    //       'Content-Type': 'application/json'
+    //   },
+    //   body: authData,
+    //   json: true
+    // };
+
+    // const fields = request(authenticateOption, function getFiledNames(err, res){
+    //     const option = {
+    //     method: 'get',
+    //     url: 'https://lex.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/stock/stock',
+    //     headers: {
+    //         'FM-Data-token': res.body.token,
+    //         'Content-Type': 'application/json, charset=UTF-8'
+    //         },
+    //     json: true
+    //     }
+    //     request(option, function(err, res){
+    //         if (err){
+    //         console.log('error', err)
+    //         throw err
+    //         }
+    //         const errorCode = res.statusCode
+    //         const records = res.body["data"]
+    //         keys = Object.keys(records[0]['fieldData'])
+    //         const fieldFormat = []
+    //         keys.forEach(function(element){
+    //             var fieldItem = {}
+    //             fieldItem['key'] = `${element}`
+    //             fieldItem['label'] = `${element}`
+    //             fieldItem['type'] = 'string'
+    //             fieldFormat.push(fieldItem)
+    //         });
+    //         console.log(fieldFormat)
+    //         return fieldFormat;
+    //     });
+    // });
+
+    const promise = z.request({
+      url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/auth/{{bundle.authData.solution}}',
+    });
+
+    return promise.then(response) => {
+      if (response.statusCode < 200 || response.statusCode > 299){
+            console.log('error', err)
+            throw new Error('the field retrieval is hitting the wall')
+            }
+            const errorCode = response.statusCode
+            const records = response.body["data"]
+            keys = Object.keys(records[0]['fieldData'])
+            const fieldFormat = []
+            keys.forEach(function(element){
+                var fieldItem = {}
+                fieldItem['key'] = `${element}`
+                fieldItem['label'] = `${element}`
+                fieldItem['type'] = 'string'
+                fieldFormat.push(fieldItem)
+            });
+            console.log(fieldFormat)
+            return fieldFormat;
+    };
+}
+
+();
 
 const getRecipe = (z, bundle) => {
   return z.request({
@@ -107,12 +189,7 @@ module.exports = {
       inputFields: [
       //function that generate dynamic field 
       //get it from fieldData
-        {key: 'name', required: true, type: 'string'},
-        {key: 'directions', required: true, type: 'text', helpText: 'Explain how should one make the recipe, step by step.'},
-        {key: 'authorId', required: true, type: 'integer', label: 'Author ID'},
-        {key: 'style', required: false, type: 'string', helpText: 'Explain what style of cuisine this is.'},
-        populateDynamicField
-        {key: 'data'}
+        createField
       ],
       perform: createRecipe,
     },

@@ -9,6 +9,7 @@ const testAuth = (z /*, bundle*/) => {
   // This method can return any truthy value to indicate the credentials are valid.
   // Raise an error to show
   return promise.then((response) => {
+  
     if (response.status === 401) {
       throw new Error('The Session Key you supplied is invalid');
     }
