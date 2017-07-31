@@ -1,12 +1,12 @@
 //testing script for FileMaker DATA API call observations
 //Run it with NODE_DEBUG=request node test.js
-const request = require('request')
+const request = require('request');
 const fs = require('fs');
 const authData = {
         'user': 'admin',
         'password': '123',
         'layout': 'stock'
-    }
+    };
 
 const authenticateOption = {
     method: 'post',
@@ -28,22 +28,22 @@ const getFiledNames = function getFiledNamesFunction(err, res){
             'Content-Type': 'application/json, charset=UTF-8'
         },
         json: true
-    }
+    };
     request(option, function(err, res){
         if (err){
-        console.log('error', err)
-        throw err
+        console.log('error', err);
+        throw err;
         }
-        const errorCode = res.statusCode
-        const records = res.body["data"]
-        keys = Object.keys(records[0]['fieldData'])
-        const fieldFormat = []
+        const errorCode = res.statusCode;
+        const records = res.body["data"];
+        keys = Object.keys(records[0]['fieldData']);
+        const fieldFormat = [];
         keys.forEach(function(element){
-            var fieldItem = {}
-            fieldItem['key'] = `${element}`
-            fieldItem['label'] = `${element}`
-            fieldItem['type'] = 'string'
-            fieldFormat.push(fieldItem)
+            var fieldItem = {};
+            fieldItem['key'] = `${element}`;
+            fieldItem['label'] = `${element}`;
+            fieldItem['type'] = 'string';
+            fieldFormat.push(fieldItem);
         });
         return fieldFormat;
     });
@@ -59,27 +59,27 @@ const createField = function createFieldFunction (){
             'Content-Type': 'application/json, charset=UTF-8'
             },
         json: true
-        }
+        };
         request(option, function(err, res){
             if (err){
-            console.log('error', err)
-            throw err
+            console.log('error', err);
+            throw err;
             }
-            const errorCode = res.statusCode
-            const records = res.body["data"]
-            keys = Object.keys(records[0]['fieldData'])
-            const fieldFormat = []
+            const errorCode = res.statusCode;
+            const records = res.body["data"];
+            keys = Object.keys(records[0]['fieldData']);
+            const fieldFormat = [];
             keys.forEach(function(element){
-                var fieldItem = {}
-                fieldItem['key'] = `${element}`
-                fieldItem['label'] = `${element}`
-                fieldItem['type'] = 'string'
-                fieldFormat.push(fieldItem)
+                var fieldItem = {};
+                fieldItem['key'] = `${element}`;
+                fieldItem['label'] = `${element}`;
+                fieldItem['type'] = 'string';
+                fieldFormat.push(fieldItem);
             });
-            console.log(fieldFormat)
+            console.log(fieldFormat);
             return fieldFormat;
         });
     });
-}
+};
 
 createField();

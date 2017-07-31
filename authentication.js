@@ -40,16 +40,22 @@ const getSessionKey = (z, bundle) => {
   });
 };
 
+const connectionLabel = (z, bundle) => { // Can also be a string, check basic auth above for an example
+    // bundle.inputData has whatever comes back from the .test function/request, assuming it returns a JSON object
+    return bundle.inputData.user;
+};
+
 module.exports = {
   type: 'session',
   // Define any auth fields your app requires here. The user will be prompted to enter this info when
   // they connect their account.
+  connectionLabel: connectionLabel,
   fields: [
-    {key: 'user', label: 'Username', required: true, type: 'string'},
-    {key: 'password', label: 'Password', required: true, type: 'string'},
-    {key: 'layout', label: 'layout', required: true, type: 'string', helpText: 'the layout of your database'},
-    {key: 'solution', label: 'solution', request: true, type: 'string', helpText: 'you database name'},
-    {key: 'subdomain', label: 'subdomain', required: true, type: 'string', helpText: 'Your filemaker host name'}
+    {key: 'user', label: 'Username', required: true, type: 'text'},
+    {key: 'password', label: 'Password', required: true, type: 'text'},
+    {key: 'layout', label: 'layout', required: true, type: 'text', helpText: 'the layout of your database'},
+    {key: 'solution', label: 'solution', request: true, type: 'text', helpText: 'you database name'},
+    {key: 'subdomain', label: 'subdomain', required: true, type: 'text', helpText: 'Your filemaker host name'}
   ],
   // The test method allows Zapier to verify that the credentials a user provides are valid. We'll execute this
   // method whenver a user connects their account for the first time.

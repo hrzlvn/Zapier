@@ -1,82 +1,30 @@
-const request = require('request')
+const request = require('request');
 const fs = require('fs');
-const authData = {
-        'user': 'admin',
-        'password': '123',
-        'layout': 'stock'
-    }
 
-const createField = function createFieldFunction (z, bundle){
+const createField = (z, bundle) => {
 
-    // const authData = {
-    //     'user': bundle.authData.user,
-    //     'password': bundle.authData.password,
-    //     'layout': bundle.authData.layout
-    // }
-
-    // const authenticateOption = {
-    //   method: 'post',
-    //   url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/auth/{{bundle.authData.solution}}',
-    //   headers: {
-    //       'Content-Type': 'application/json'
-    //   },
-    //   body: authData,
-    //   json: true
-    // };
-
-    // const fields = request(authenticateOption, function getFiledNames(err, res){
-    //     const option = {
-    //     method: 'get',
-    //     url: 'https://lex.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/stock/stock',
-    //     headers: {
-    //         'FM-Data-token': res.body.token,
-    //         'Content-Type': 'application/json, charset=UTF-8'
-    //         },
-    //     json: true
-    //     }
-    //     request(option, function(err, res){
-    //         if (err){
-    //         console.log('error', err)
-    //         throw err
-    //         }
-    //         const errorCode = res.statusCode
-    //         const records = res.body["data"]
-    //         keys = Object.keys(records[0]['fieldData'])
-    //         const fieldFormat = []
-    //         keys.forEach(function(element){
-    //             var fieldItem = {}
-    //             fieldItem['key'] = `${element}`
-    //             fieldItem['label'] = `${element}`
-    //             fieldItem['type'] = 'string'
-    //             fieldFormat.push(fieldItem)
-    //         });
-    //         console.log(fieldFormat)
-    //         return fieldFormat;
-    //     });
-    // });
-
-    const createFieldPromise = z.request({
+    const promise = z.request({
       url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
-      method: 'GET',
+      method: 'GET'
     });
 
-    return createFieldPromise.then(response) => {
+    return promise.then(response) => {
       if (response.statusCode < 200 || response.statusCode > 299){
-            console.log('error', err)
+            console.log('error', err);
             throw new Error('createFieldPromise is hitting the wall');
           }
-      const errorCode = response.statusCode
-      const records = response.body["data"]
-      keys = Object.keys(records[0]['fieldData'])
-      const fieldFormat = []
+      const errorCode = response.statusCode;
+      const records = response.body["data"];
+      keys = Object.keys(records[0]['fieldData']);
+      const fieldFormat = [];
       keys.forEach(function(element){
-          var fieldItem = {}
-          fieldItem['key'] = `${element}`
-          fieldItem['label'] = `${element}`
-          fieldItem['type'] = 'string'
-          fieldFormat.push(fieldItem)
+          var fieldItem = {};
+          fieldItem['key'] = `${element}`;
+          fieldItem['label'] = `${element}`;
+          fieldItem['type'] = 'string';
+          fieldFormat.push(fieldItem);
       });
-      console.log(fieldFormat)
+      console.log(fieldFormat);
       return fieldFormat;
     };
 };
@@ -104,28 +52,28 @@ const listRecipes = (z, bundle) => {
 const createRecipe = (z, bundle) => {
 
   const payload = {}
-  
-  const createRecipeFieldPromise = z.request({
+
+  const promise = z.request({
       url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
       method: 'GET'
     });
 
-  createRecipeFieldPromise.then(response) => {
-    
+  promise.then(response) => {
+
     if (response.statusCode < 200 || response.statusCode > 299){
-          console.log('error', err)
+          console.log('error', err);
           throw new Error('createRecipePromise is hitting the wall');
     }
-  
-    const records = response.body["data"]
-    keys = Object.keys(records[0]['fieldData'])
-    
+
+    const records = response.body["data"];
+    keys = Object.keys(records[0]['fieldData']);
+
     keys.forEach(function(element){
        payload[element] = bundle.inputData.element
     });
-    
-    console.log(payload)
-    
+
+    console.log(payload);
+
     const requestOptions = {
     url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
     method: 'POST',
@@ -140,7 +88,7 @@ const createRecipe = (z, bundle) => {
 
 const searchRecipe = (z, bundle) => {
   return z.request({
-      url: url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/find/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+      url:'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/find/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
       params: {
         'query': bundle.inputData.searchData
       }
@@ -157,10 +105,6 @@ const searchRecipe = (z, bundle) => {
     });
 };
 
-const populateDynamicField = (z, bundle) => {
-  return dynamicField 
-}
-
 // This file exports a Recipe resource. The definition below contains all of the keys available,
 // and implements the list and create methods.
 module.exports = {
@@ -172,50 +116,28 @@ module.exports = {
   get: {
     display: {
       label: 'Get Recipe',
-      description: 'Gets a recipe.',
+      description: 'Gets a recipe.'
     },
     operation: {
       inputFields: [
-        {key: 'recordId', required: true},
+        {key: 'recordId', required: true}
       ],
-      perform: getRecipe,
-    },
+      perform: getRecipe
+    }
   },
-  // The list method on this resource becomes a Trigger on the app. Zapier will use polling to watch for new records
-  
-  // list: {
-  //   display: {
-  //     label: 'New Recipe',
-  //     description: 'Trigger when a new recipe is added.',
-  //   },
-  //   operation: {
-  //     inputFields: [
-  //       {key: 'style', type: 'string', helpText: 'Explain what style of cuisine this is.'},
-  //     ],
-  //     perform: listRecipes,
-  //   },
-  // },
-  
-  // If your app supports webhooks, you can define a hook method instead of a list method.
-  // Zapier will turn this into a webhook Trigger on the app.
-  // hook: {
-  //
-  // },
 
-  // The create method on this resource becomes a Write on this app
-  
   create: {
     display: {
       label: 'Create Recipe',
-      description: 'Creates a new recipe.',
+      description: 'Creates a new recipe.'
     },
     operation: {
       inputFields: [
-      //function that generate dynamic field 
+      //function that generate dynamic field
       //get it from fieldData
         createField
       ],
-      perform: createRecipe,
+      perform: createRecipe
     },
   },
 
@@ -223,19 +145,19 @@ module.exports = {
   search: {
     display: {
       label: 'Find Recipe',
-      description: 'Finds an existing recipe by name.',
+      description: 'Finds an existing recipe by name.'
     },
     operation: {
       inputFields: [
         /*
           searchData object
-          Fields and Find criteria in the following query schema: 
+          Fields and Find criteria in the following query schema:
           {query: [ { "Company" : "*Hospital", "Group": "=Nurse"}]}
           {"query": [ { "<fieldName>": "<fieldValue>", "omit" : "true" to set (optional) }, ...]}
         */
-        {key: 'name', required: true, type: 'string'},
+        {key: 'name', required: true, type: 'string'}
       ],
-      perform: searchRecipe,
+      perform: searchRecipe
     },
   },
 
@@ -248,7 +170,7 @@ module.exports = {
     name: 'Best Spagetti Ever',
     authorId: 1,
     directions: '1. Boil Noodles\n2.Serve with sauce',
-    style: 'italian',
+    style: 'italian'
   },
 
   // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
@@ -261,6 +183,6 @@ module.exports = {
     {key: 'name', label: 'Name'},
     {key: 'directions', label: 'Directions'},
     {key: 'authorId', label: 'Author ID'},
-    {key: 'style', label: 'Style'},
+    {key: 'style', label: 'Style'}
   ]
 };
