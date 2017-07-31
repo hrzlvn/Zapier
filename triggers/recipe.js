@@ -1,13 +1,10 @@
-const request = require('request')
-const fs = require('fs');
-
-const getRecipe = (z, bundle) => {
-  return z.request({
-      url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}/{{bundle.inputData.recordId}}',
-      method: 'GET'
-    })
-    .then((response) => JSON.parse(response.content));
-};
+// const getRecipe = (z, bundle) => {
+//   return z.request({
+//       url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}/{{bundle.inputData.recordId}}',
+//       method: 'GET'
+//     })
+//     .then((response) => JSON.parse(response.content));
+// };
 
 const listRecipes = (z, bundle) => {
   return z.request({
@@ -17,7 +14,7 @@ const listRecipes = (z, bundle) => {
       //   style: bundle.inputData.style
       // }
     })
-    .then((response) => JSON.parse(response.content));
+    .then((response) => JSON.parse(response.content).data);
 };
 
 // This file exports a Recipe resource. The definition below contains all of the keys available,
@@ -34,15 +31,9 @@ module.exports = {
   },
   operation: {
     inputFields: [
-      {key: 'recordId', required: true}
     ],
-    perform: getRecipe
-  },
-  // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
-  // field definitions. The result will be used to augment the sample.
-  // outputFields: () => { return []; }
-  // Alternatively, a static field definition should be provided, to specify labels for the fields
-  outputFields: function (z, bundle){
+    perform: listRecipes,
+    outputFields: function (z, bundle){
 
       const createFieldPromise = z.request({
         url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
@@ -56,7 +47,8 @@ module.exports = {
             }
         const errorCode = response.statusCode;
         const records = response.body["data"];
-        keys = Object.keys(records[0]['fieldData']);
+        
+        keys = Object.keys(records[0]);
         const fieldFormat = [];
         keys.forEach(function(element){
             var fieldItem = {};
@@ -69,4 +61,10 @@ module.exports = {
         return fieldFormat;
     });
     }
+  },
+  // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
+  // field definitions. The result will be used to augment the sample.
+  // outputFields: () => { return []; }
+  // Alternatively, a static field definition should be provided, to specify labels for the fields
+  
   };

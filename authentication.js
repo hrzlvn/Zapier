@@ -54,7 +54,7 @@ module.exports = {
     {key: 'user', label: 'Username', required: true, type: 'text'},
     {key: 'password', label: 'Password', required: true, type: 'text'},
     {key: 'layout', label: 'layout', required: true, type: 'text', helpText: 'the layout of your database'},
-    {key: 'solution', label: 'solution', request: true, type: 'text', helpText: 'you database name'},
+    {key: 'solution', label: 'solution', required: true, type: 'text', helpText: 'you database name'},
     {key: 'subdomain', label: 'subdomain', required: true, type: 'text', helpText: 'Your filemaker host name'}
   ],
   // The test method allows Zapier to verify that the credentials a user provides are valid. We'll execute this

@@ -1,6 +1,3 @@
-const request = require('request');
-const fs = require('fs');
-
 const createField = (z, bundle) => {
 
     const promise = z.request({

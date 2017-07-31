@@ -2,7 +2,7 @@
 const createField = function (z, bundle){
 
     const createFieldPromise = z.request({
-      url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+      url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/layout/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
       method: 'GET'
     });
 
@@ -12,59 +12,54 @@ const createField = function (z, bundle){
             throw new Error('createFieldPromise is hitting the wall');
           }
       // const errorCode = response.statusCode;
-      const records = response.body["data"];
-      keys = Object.keys(records[0]['fieldData']);
-      const fieldFormat = [];
-      keys.forEach(function(element){
+      const fields = JSON.parse(response.content).metaData;
+      const array = [];
+      fields.forEach(function(field){
           var fieldItem = {};
-          fieldItem['key'] = `${element}`;
-          fieldItem['label'] = `${element}`;
-          fieldItem['type'] = 'string';
-          fieldFormat.push(fieldItem);
+          fieldItem['key'] = `${field.name}`;
+          fieldItem['label'] = `${field.name}`;
+          fieldItem['type'] = `${field.result}`;
+          array.push(fieldItem);
       });
-      console.log(fieldFormat);
-      return fieldFormat;
+      console.log(array);
+      
+      return array;
     });
 };
 
 
 const createRecipe = function (z, bundle) {
-
-  const payload = {}
   
   const createRecipeFieldPromise = z.request({
-      url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+      url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/layout/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
       method: 'GET'
     });
 
   createRecipeFieldPromise.then(function (response){
-    
     if (response.statusCode < 200 || response.statusCode > 299){
           console.log('error', err);
           throw new Error('createRecipePromise is hitting the wall');
     }
-  
-    const records = response.body["data"];
-    keys = Object.keys(records[0]['fieldData']);
-    
-    keys.forEach(function(element){
-       payload[element] = bundle.inputData.element;
+    const fields = JSON.parse(response.content).metaData;
+    const payload = {}
+    fields.forEach(function(field){
+       payload[field.name] = bundle.inputData[field.name];
     });
-    
     console.log(payload);
-    
     const requestOptions = {
     url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
     method: 'POST',
     body: JSON.stringify({data: payload}),
     headers: {'Content-Type': 'application/json'}
-  };
-
-  return z.request(requestOptions)
-    .then((response) => JSON.parse(response.content));
-  });
+    }
+    return requestOptions;
+  })
+  .then(function(requestOptions){
+    return z.request(requestOptions)
+  })
+  .then(function(response){
+    return JSON.parse(response.content)});
 };
-
 
 // This file exports a Recipe resource. The definition below contains all of the keys available,
 // and implements the list and create methods.
