@@ -14,7 +14,14 @@ const listRecipes = (z, bundle) => {
       //   style: bundle.inputData.style
       // }
     })
-    .then((response) => JSON.parse(response.content).data);
+    .then(function(response){
+
+      var records = JSON.parse(response.content).data;
+      records.forEach(function(record){
+        record.id = record.recordId
+      });
+      return records;
+    });
 };
 
 // This file exports a Recipe resource. The definition below contains all of the keys available,
@@ -33,7 +40,8 @@ module.exports = {
     inputFields: [
     ],
     perform: listRecipes,
-    outputFields: function (z, bundle){
+    
+    outputFields: [(z, bundle) => {
 
       const createFieldPromise = z.request({
         url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
@@ -60,7 +68,7 @@ module.exports = {
         console.log(fieldFormat);
         return fieldFormat;
     });
-    }
+    }]
   },
   // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
   // field definitions. The result will be used to augment the sample.
