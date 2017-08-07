@@ -2,6 +2,7 @@ const createRecipe = require('./creates/recipe')
 const listRecipe = require('./triggers/recipe')
 const authentication = require('./authentication')
 
+
 const includeSessionKeyHeader = (request, z, bundle) => {
   if (bundle.authData.sessionKey) {
     request.headers = request.headers || {};
@@ -26,6 +27,7 @@ const App = {
   version: require('./package.json').version,
   platformVersion: require('zapier-platform-core').version,
   authentication: authentication,
+  
   // beforeRequest & afterResponse are optional hooks into the provided HTTP client
   beforeRequest: [
     includeSessionKeyHeader

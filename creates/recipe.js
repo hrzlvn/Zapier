@@ -22,7 +22,6 @@ const createField = function (z, bundle){
           array.push(fieldItem);
       });
       console.log(array);
-      
       return array;
     });
 };
@@ -30,6 +29,7 @@ const createField = function (z, bundle){
 
 const createRecipe = function (z, bundle) {
   
+  //Fecthing the schema of the database at runtime to setup the input interface for end user.
   const createRecipeFieldPromise = z.request({
       url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/layout/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
       method: 'GET'
@@ -46,6 +46,8 @@ const createRecipe = function (z, bundle) {
        payload[field.name] = bundle.inputData[field.name];
     });
     console.log(payload);
+
+    //making the actual FileMaker DataAPI call
     const requestOptions = {
     url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
     method: 'POST',

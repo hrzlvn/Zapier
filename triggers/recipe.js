@@ -10,12 +10,11 @@ const listRecipes = (z, bundle) => {
   return z.request({
       url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
       method: 'GET'
-      // params: {
-      //   style: bundle.inputData.style
-      // }
     })
     .then(function(response){
 
+      //wrap around the original JSON response to aligh with Zapier's standard
+      //new events triggered by ascending unique record.id
       var records = JSON.parse(response.content).data;
       records.forEach(function(record){
         record.id = record.recordId
@@ -24,8 +23,6 @@ const listRecipes = (z, bundle) => {
     });
 };
 
-// This file exports a Recipe resource. The definition below contains all of the keys available,
-// and implements the list and create methods.
 module.exports = {
   key: 'listRecipe',
   noun: 'Recipe',
@@ -41,34 +38,36 @@ module.exports = {
     ],
     perform: listRecipes,
     
-    outputFields: [(z, bundle) => {
+    outputFields: [
+                    //Dynamically fetching the schema of the record first and fetching the data based on the schema
+                    (z, bundle) => {
+                      const createFieldPromise = z.request({
+                        url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+                        method: 'GET'
+                      });
 
-      const createFieldPromise = z.request({
-        url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
-        method: 'GET'
-      });
-
-      return createFieldPromise.then(function(response){
-        if (response.statusCode < 200 || response.statusCode > 299){
-              console.log('error', err);
-              throw new Error('createFieldPromise is hitting the wall');
-            }
-        const errorCode = response.statusCode;
-        const records = response.body["data"];
-        
-        keys = Object.keys(records[0]);
-        const fieldFormat = [];
-        keys.forEach(function(element){
-            var fieldItem = {};
-            fieldItem['key'] = `${element}`;
-            fieldItem['label'] = `${element}`;
-            fieldItem['type'] = 'string';
-            fieldFormat.push(fieldItem);
-        });
-        console.log(fieldFormat);
-        return fieldFormat;
-    });
-    }]
+                      return createFieldPromise.then(function(response){
+                        if (response.statusCode < 200 || response.statusCode > 299){
+                              console.log('error', err);
+                              throw new Error('createFieldPromise is hitting the wall');
+                            }
+                        const errorCode = response.statusCode;
+                        const records = response.body["data"];
+                        
+                        keys = Object.keys(records[0]);
+                        const fieldFormat = [];
+                        keys.forEach(function(element){
+                            var fieldItem = {};
+                            fieldItem['key'] = `${element}`;
+                            fieldItem['label'] = `${element}`;
+                            fieldItem['type'] = 'string';
+                            fieldFormat.push(fieldItem);
+                        });
+                        console.log(fieldFormat);
+                        return fieldFormat;
+                    });
+                    }
+    ]
   },
   // If the resource can have fields that are custom on a per-user basis, define a function to fetch the custom
   // field definitions. The result will be used to augment the sample.
