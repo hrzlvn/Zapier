@@ -163,3 +163,11 @@ zapier migrate 1.0.0 1.0.1
 # OR - mark the old version as deprecated
 zapier deprecate 1.0.0 2017-01-01
 ```
+### Demo
+By integrating FileMaker REST into Zapier, we are able to connect with hundreds of REST Services out there including but no limited to: quickbook, quickbase, salesforce, AWS, Autotask, MySQL, SQL Server, Shopify, Google Suites.  
+Here is an FileMaker App I built with FileMaker Pro that works like an native Email desktop client. It's hosted in FileMaker Cloud, the data was propagated to Zapier using FileMaker Cloud Data API, it leveraged Gmail REST API to send out the actual Email.  
+![emailClientDemo1](./demo/emailClientDemo1.png)  
+![emailClientDemo2](./demo/emailClientDemo2.png)
+
+
+
