@@ -7,7 +7,7 @@ describe('triggers', () => {
 
   describe('newRecord', () => {
     it('should fetch new record from FileMaker Cloud', (done) => {
-      const bundle = {};
+      const bundle = {authData: {user: 'admin', password: '123', layout: 'email', solution: 'email', subdomian: 'lex'}};
       appTester(App.triggers.listRecipe.operation.perform, bundle)
         .then(results => {
           results.length.should.above(0);
