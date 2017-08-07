@@ -1,11 +1,3 @@
-// const getRecipe = (z, bundle) => {
-//   return z.request({
-//       url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}/{{bundle.inputData.recordId}}',
-//       method: 'GET'
-//     })
-//     .then((response) => JSON.parse(response.content));
-// };
-
 const listRecipes = (z, bundle) => {
   return z.request({
       url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
