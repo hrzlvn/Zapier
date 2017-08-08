@@ -4,7 +4,7 @@ const authentication = require('./authentication')
 
 
 const includeSessionKeyHeader = (request, z, bundle) => {
-  if (bundle.authData.sessionKey) {
+  if (bundle && bundle.authData.sessionKey) {
     request.headers = request.headers || {};
     request.headers['FM-Data-token'] = bundle.authData.sessionKey;
   }

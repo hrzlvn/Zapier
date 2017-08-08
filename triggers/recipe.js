@@ -1,6 +1,6 @@
 const listRecipes = (z, bundle) => {
   return z.request({
-      url: 'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+      url: `https://${bundle.authData.subdomain}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/${bundle.authData.solution}/${bundle.authData.layout}`,
       method: 'GET'
     })
     .then(function(response){
@@ -34,7 +34,7 @@ module.exports = {
                     //Dynamically fetching the schema of the record first and fetching the data based on the schema
                     (z, bundle) => {
                       const createFieldPromise = z.request({
-                        url :'https://{{bundle.authData.subdomain}}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/{{bundle.authData.solution}}/{{bundle.authData.layout}}',
+                        url :`https://${bundle.authData.subdomain}.fmi-beta.filemaker-cloud.com/fmi/rest/api/record/${bundle.authData.solution}/${bundle.authData.layout}`,
                         method: 'GET'
                       });
 

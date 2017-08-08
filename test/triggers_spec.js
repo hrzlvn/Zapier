@@ -1,26 +1,23 @@
-require('should');
-const zapier = require('zapier-platform-core');
-const App = require('../index');
-const appTester = zapier.createAppTester(App);
+// require('should');
+// const zapier = require('zapier-platform-core');
+// const App = require('../index');
+// const appTester = zapier.createAppTester(App);
 
-describe('triggers', () => {
+// describe('triggers', () => {
 
-  describe('newRecord', () => {
-    it('should fetch new record from FileMaker Cloud', (done) => {
-      const bundle = {authData: {user: 'admin', password: '123', layout: 'email', solution: 'email', subdomian: 'lex'}};
-      appTester(App.triggers.listRecipe.operation.perform, bundle)
-        .then(results => {
-          results.length.should.above(0);
+//   describe('newRecord', () => {
+//     it('should fetch new record from FileMaker Cloud', (done) => {
+//       var bundle = {authData: {user: 'admin', password: '123', layout: 'email', solution: 'email', subdomain: 'lex'}};
+//       appTester(App.authentication.sessionConfig.perform, bundle)
+//         .then(App.beforeRequest[0], bundle)
+//         // .then(App.triggers.listRecipe.operation.perform, bundle)
+//         .then(results => {
+//           console.log(results);
+//           results.should.have.property('sessionKey');          
+//           done();
+//         })
+//         .catch(done);
+//     });
+//   });
 
-          const firstRecord = results[0];
-          firstRecord.should.have.property('id');
-          firstRecord.should.have.property('data');
-          firstRecord.should.have.property('portalData');
-          firstRecord.should.have.property('modId');
-          done();
-        })
-        .catch(done);
-    });
-  });
-
-});
+// });
